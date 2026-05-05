@@ -1,20 +1,22 @@
 import { createClient } from '@/lib/supabase/server';
 import { MatrixRain } from '@/components/effects/MatrixRain';
 import { HubClient } from './HubClient';
-import { Inter } from 'next/font/google';
-
-const inter = Inter({ subsets: ['latin'], display: 'swap', preload: true });
+import { inter } from '@/lib/fonts';
+import { redirect } from 'next/navigation';
 
 export default async function HubPage() {
   const supabase = await createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+
+  if (!authUser) {
+    redirect('/auth/login');
+  }
 
   // Load rooms and user progress in parallel on the server
   const [
-    { data: rooms },
-    { data: { user: authUser } }
+    { data: rooms }
   ] = await Promise.all([
-    supabase.from('rooms').select('*').order('room_number'),
-    supabase.auth.getUser()
+    supabase.from('rooms').select('*').order('room_number')
   ]);
 
   let userData = null;
@@ -34,6 +36,7 @@ export default async function HubPage() {
       p.status === 'perfect' || 
       (p.puzzles_solved >= p.puzzles_total && p.puzzles_total > 0)
     ).length;
+    
     if (userData && userData.total_rooms_completed !== actualCompleted) {
       await supabase.from('users').update({ 
         total_rooms_completed: actualCompleted,
@@ -44,7 +47,7 @@ export default async function HubPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', position: 'relative' }}>
+    <div className={inter.className} style={{ minHeight: '100vh', position: 'relative' }}>
       <MatrixRain />
       <HubClient 
         initialRooms={rooms || []} 

@@ -153,13 +153,19 @@ export function ProfileEditModal({ user, isOpen, onClose }: ProfileEditModalProp
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <div className="input-group">
-                    <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginBottom: 6 }}>USERNAME</label>
+                    <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginBottom: 6 }}>USERNAME (14-DAY COOLDOWN)</label>
                     <input 
                       value={formData.username}
                       onChange={(e) => setFormData({...formData, username: e.target.value})}
                       className="input-main" 
+                      placeholder="Enter unique username"
                       style={{ width: '100%', padding: '10px 14px', borderRadius: 8, background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', color: '#FFF' }}
                     />
+                    {user.username_last_changed_at && (
+                      <div style={{ fontSize: '0.65rem', color: 'var(--accent-2)', marginTop: 4 }}>
+                        Last changed: {new Date(user.username_last_changed_at).toLocaleDateString()}
+                      </div>
+                    )}
                   </div>
                   <div className="input-group">
                     <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginBottom: 6 }}>DISPLAY NAME</label>
@@ -167,11 +173,22 @@ export function ProfileEditModal({ user, isOpen, onClose }: ProfileEditModalProp
                       value={formData.display_name}
                       onChange={(e) => setFormData({...formData, display_name: e.target.value})}
                       className="input-main" 
+                      placeholder="Publicly visible name"
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: 8, background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', color: '#FFF' }}
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginBottom: 6 }}>MOBILE NUMBER (UNIQUE)</label>
+                    <input 
+                      value={formData.mobile_number}
+                      onChange={(e) => setFormData({...formData, mobile_number: e.target.value})}
+                      className="input-main" 
+                      placeholder="+1234567890"
                       style={{ width: '100%', padding: '10px 14px', borderRadius: 8, background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', color: '#FFF' }}
                     />
                   </div>
                   <button onClick={handleUpdateBasic} disabled={isLoading} className="btn-primary" style={{ marginTop: 8, padding: '10px', fontSize: '0.8rem', width: '100%' }}>
-                    SAVE IDENTITY
+                    {isLoading ? 'SYNCING...' : 'SAVE CHANGES'}
                   </button>
                 </div>
               </section>

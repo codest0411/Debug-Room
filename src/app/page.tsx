@@ -259,19 +259,6 @@ export default function LandingPage() {
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-                <Link
-                  href="/leaderboard"
-                  style={{
-                    color: 'var(--text-secondary)',
-                    textDecoration: 'none',
-                    fontSize: '0.8rem',
-                    fontFamily: 'var(--font-display)',
-                    letterSpacing: '0.05em',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Leaderboard
-                </Link>
                 <Link href="/auth/login">
                   <button className="btn-ghost" style={{ padding: '8px 20px', fontSize: '0.75rem' }}>
                     Login
