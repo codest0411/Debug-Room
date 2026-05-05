@@ -101,7 +101,7 @@ export default function AdminPuzzlesPage() {
           </button>
         </div>
 
-        <div style={{ background: '#161616', border: '1px solid #2A2A2A', borderRadius: 8, overflow: 'hidden' }}>
+        <div className="table-responsive" style={{ background: '#161616', border: '1px solid #2A2A2A', borderRadius: 8, overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
@@ -128,7 +128,7 @@ export default function AdminPuzzlesPage() {
                   <td style={{ padding: '12px 16px', display: 'flex', gap: 12 }}>
                     <button 
                       onClick={() => { 
-                        navigator.clipboard.writeText(p.validation_value);
+                        navigator.clipboard.writeText(p.correct_solution);
                         setCopiedId(p.id);
                         setTimeout(() => setCopiedId(null), 2000);
                       }} 

@@ -441,9 +441,9 @@ export default function RoomPage() {
       </div>
 
       {/* Main content */}
-      <div style={{ flex: 1, display: 'flex', paddingTop: 70, height: '100vh' }}>
+      <div className="game-layout" style={{ flex: 1, display: 'flex', paddingTop: 70, height: '100vh' }}>
         {/* Left — puzzle info */}
-        <div style={{
+        <div className="game-sidebar" style={{
           width: 380, flexShrink: 0, borderRight: '1px solid var(--border)',
           background: 'var(--surface)', display: 'flex', flexDirection: 'column',
           overflow: 'auto',
@@ -517,9 +517,11 @@ export default function RoomPage() {
                 <div style={{ color: 'var(--danger)', fontFamily: 'var(--font-display)', fontSize: '0.85rem', fontWeight: 700, marginBottom: 4 }}>
                   ✗ INCORRECT
                 </div>
-                <div style={{ color: '#EEE', fontSize: '0.8rem', fontStyle: 'italic', marginBottom: 4 }}>
-                  "{ghostReaction}"
-                </div>
+                {ghostReaction && (
+                  <div style={{ color: '#EEE', fontSize: '0.8rem', fontStyle: 'italic', marginBottom: 4 }}>
+                    "{ghostReaction}"
+                  </div>
+                )}
                 <div style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>
                   Check the logic again. The bug is still there.
                 </div>
@@ -528,8 +530,8 @@ export default function RoomPage() {
           </AnimatePresence>
         </div>
 
-        {/* Right — code editor */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#0D0D0D' }}>
+        {/* Right — editor & preview */}
+        <div className="game-editor-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
           <div style={{
             padding: '10px 20px', borderBottom: '1px solid var(--border)',
             display: 'flex', alignItems: 'center', gap: 8,

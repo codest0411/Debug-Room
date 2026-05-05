@@ -124,6 +124,83 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ============================================================
+   RESPONSIVE UTILITIES
+   ============================================================ */
+
+.container-responsive {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+@media (max-width: 1024px) {
+  .game-layout {
+    flex-direction: column !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  
+  .game-sidebar {
+    width: 100% !important;
+    height: auto !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border);
+    max-height: 400px;
+  }
+  
+  .game-editor-container {
+    height: 500px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+  
+  .mobile-stack {
+    flex-direction: column !important;
+  }
+  
+  .room-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .header-content {
+    padding: 12px !important;
+  }
+  
+  .admin-layout {
+    flex-direction: column !important;
+  }
+  
+  .admin-sidebar {
+    width: 100% !important;
+    height: auto !important;
+    border-right: none !important;
+    border-bottom: 1px solid #2A2A2A;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-header-title {
+    font-size: 0.8rem !important;
+  }
+  
+  .game-header-subtitle {
+    font-size: 0.6rem !important;
+  }
+}
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

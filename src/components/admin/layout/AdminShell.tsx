@@ -33,7 +33,7 @@ export function AdminSidebar({ user, collapsed, onToggle }: {
   const isSuperAdmin = user?.is_super_admin;
 
   return (
-    <div style={{
+    <div className="admin-sidebar" style={{
       width: collapsed ? 56 : 240,
       flexShrink: 0,
       background: '#111111',
@@ -106,7 +106,7 @@ export function AdminHeader({ user, onToggleSidebar }: { user: Partial<User> | n
   };
 
   return (
-    <div style={{ height: 56, flexShrink: 0, background: '#111111', borderBottom: '1px solid #1E1E1E', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', position: 'sticky', top: 0, zIndex: 50 }}>
+    <div className="header-content" style={{ height: 56, flexShrink: 0, background: '#111111', borderBottom: '1px solid #1E1E1E', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', position: 'sticky', top: 0, zIndex: 50 }}>
       <button onClick={onToggleSidebar} style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', padding: 8, borderRadius: 4, fontSize: '1rem' }}>☰</button>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
         {user && (
@@ -156,7 +156,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#0D0D0D' }}>
+    <div className="admin-layout" style={{ display: 'flex', minHeight: '100vh', background: '#0D0D0D' }}>
       <AdminSidebar user={user} collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <AdminHeader user={user} onToggleSidebar={() => setCollapsed(!collapsed)} />

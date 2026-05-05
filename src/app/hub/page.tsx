@@ -343,6 +343,7 @@ export default function HubPage() {
           </div>
         ) : (
           <div
+            className="room-grid"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
