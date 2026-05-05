@@ -116,7 +116,7 @@ function RoomCard({
             <div className="progress-fill" style={{ width: `${completionPct}%` }} />
           </div>
           <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: 4 }}>
-            {progress.puzzles_solved}/{progress.puzzles_total} puzzles
+            {progress.puzzles_solved}/{progress.puzzles_total || room.total_puzzles || 0} puzzles
             {progress.time_taken_seconds && (
               <> · {Math.floor(progress.time_taken_seconds / 60)}m {progress.time_taken_seconds % 60}s</>
             )}

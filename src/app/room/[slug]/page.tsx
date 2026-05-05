@@ -194,6 +194,10 @@ export default function RoomPage() {
 
         if (prog) {
           setProgress(prog);
+          // Sync puzzles_total if room configuration changed
+          if (prog.puzzles_total !== (puzzleData?.length || 0)) {
+            await supabase.from('room_progress').update({ puzzles_total: puzzleData?.length || 0 }).eq('id', prog.id);
+          }
           const solved = prog.puzzles_solved || 0;
           const idx = Math.min(solved, (puzzleData?.length || 1) - 1);
           setCurrentIdx(idx);
@@ -274,7 +278,7 @@ export default function RoomPage() {
           await supabase.from('room_progress').upsert({
             user_id: userId,
             room_id: room.id,
-            puzzles_solved: Math.max(currentIdx + 1, currentProg?.puzzles_solved || 0),
+            puzzles_solved: Math.min(Math.max(currentIdx + 1, currentProg?.puzzles_solved || 0), puzzles.length),
             status: newStatus,
             last_played_at: new Date().toISOString(),
             ...(newStatus === 'completed' ? { completed_at: new Date().toISOString() } : {})
