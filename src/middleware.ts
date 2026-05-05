@@ -23,18 +23,28 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const isLoginPage = 
+    request.nextUrl.pathname.startsWith('/admin/login') || 
+    request.nextUrl.pathname.startsWith('/auth/login');
+
+  let user = null;
+  // ONLY check session if we are NOT on a login page to avoid 10s timeouts on public routes
+  if (!isLoginPage) {
+    try {
+      const { data } = await supabase.auth.getUser();
+      user = data.user;
+    } catch (err) {
+      // Network jitter
+    }
+  }
 
   // Protect admin routes
   if (request.nextUrl.pathname.startsWith('/admin')) {
-    const isLoginPage = request.nextUrl.pathname.startsWith('/admin/login');
-
     if (!user && !isLoginPage) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
 
-    // Check admin role for non-login admin routes
-    if (!isLoginPage && user) {
+    if (user && !isLoginPage) {
       const { data: userData } = await supabase
         .from('users')
         .select('is_admin')

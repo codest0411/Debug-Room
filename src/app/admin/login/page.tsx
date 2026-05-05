@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { motion } from 'framer-motion';
+import { loginAdmin } from './actions';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -11,32 +11,24 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  // const [attempts, setAttempts] = useState(0);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Access limit removed for development
-    // if (attempts >= 10) { setError('Account locked. Too many failed attempts.'); return; }
-    setIsLoading(true); setError('');
+    setIsLoading(true);
+    setError('');
 
-    const supabase = createClient();
-    const { data, error: err } = await supabase.auth.signInWithPassword({ email, password });
+    const formData = new FormData(e.currentTarget);
+    const result = await loginAdmin(formData);
 
-    if (err) {
-      setError(`Authentication failed: ${err.message}`);
+    if (result.error) {
+      setError(result.error);
       setIsLoading(false);
       return;
     }
 
-    if (data.user) {
-      const { data: userData } = await supabase.from('users').select('is_admin, admin_role').eq('id', data.user.id).single();
-      if (!userData?.is_admin) {
-        await supabase.auth.signOut();
-        setError('Access denied. Admin privileges required.');
-        setIsLoading(false);
-        return;
-      }
+    if (result.success) {
       router.push('/admin/dashboard');
+      router.refresh();
     }
   };
 
@@ -59,18 +51,16 @@ export default function AdminLoginPage() {
           )}
 
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {[
-              { label: 'Email Address', value: email, onChange: setEmail, type: 'email' },
-              { label: 'Password', value: password, onChange: setPassword, type: 'password' },
-            ].map(({ label, value, onChange, type }) => (
-              <div key={label}>
-                <label style={{ display: 'block', fontSize: '0.75rem', color: '#888', marginBottom: 6, fontWeight: 500 }}>{label}</label>
-                <input type={type} value={value} onChange={(e) => onChange(e.target.value)} required autoComplete={type === 'email' ? 'email' : 'current-password'}
-                  style={{ width: '100%', padding: '10px 12px', background: '#1E1E1E', border: '1px solid #2A2A2A', borderRadius: 4, color: '#F0F0F0', fontSize: '0.875rem', outline: 'none', fontFamily: 'monospace', transition: 'border-color 0.15s' }}
-                  onFocus={(e) => (e.target.style.borderColor = '#00FF88')}
-                  onBlur={(e) => (e.target.style.borderColor = '#2A2A2A')} />
-              </div>
-            ))}
+            <div>
+              <label style={{ display: 'block', fontSize: '0.75rem', color: '#888', marginBottom: 6, fontWeight: 500 }}>Email Address</label>
+              <input name="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email"
+                style={{ width: '100%', padding: '10px 12px', background: '#1E1E1E', border: '1px solid #2A2A2A', borderRadius: 4, color: '#F0F0F0', fontSize: '0.875rem', outline: 'none', fontFamily: 'monospace' }} />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.75rem', color: '#888', marginBottom: 6, fontWeight: 500 }}>Password</label>
+              <input name="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password"
+                style={{ width: '100%', padding: '10px 12px', background: '#1E1E1E', border: '1px solid #2A2A2A', borderRadius: 4, color: '#F0F0F0', fontSize: '0.875rem', outline: 'none', fontFamily: 'monospace' }} />
+            </div>
 
             <button type="submit" disabled={isLoading}
               style={{ padding: '10px', background: isLoading ? '#1E1E1E' : '#00FF88', color: isLoading ? '#888' : '#000', border: 'none', borderRadius: 4, fontWeight: 600, fontSize: '0.875rem', cursor: isLoading ? 'not-allowed' : 'pointer', transition: 'all 0.15s', marginTop: 4 }}>

@@ -20,26 +20,30 @@ export default function LeaderboardPage() {
       setIsLoading(true);
       const supabase = createClient();
       const { data } = await supabase
-        .from('leaderboard')
-        .select('*, user:user_id(username, display_name, avatar_url, personality_type)')
-        .order(tab === 'weekly' ? 'weekly_xp' : 'total_xp', { ascending: false })
+        .from('users')
+        .select('id, username, display_name, avatar_url, personality_type, xp, created_at')
+        .order('xp', { ascending: false })
         .limit(100);
 
       if (data) {
-        const mapped = data.map((row: Record<string, unknown>) => ({
-          ...row,
-          username: (row.user as Record<string, unknown>)?.username as string || 'unknown',
-          display_name: (row.user as Record<string, unknown>)?.display_name as string | null || null,
-          avatar_url: (row.user as Record<string, unknown>)?.avatar_url as string | null || null,
-          personality_type: (row.user as Record<string, unknown>)?.personality_type as string | null || null,
+        const mapped = data.map((u, i) => ({
+          id: u.id,
+          user_id: u.id,
+          username: u.username,
+          display_name: u.display_name,
+          avatar_url: u.avatar_url,
+          personality_type: u.personality_type,
+          total_xp: u.xp,
+          weekly_xp: u.xp, // Fallback if weekly table doesn't exist
+          rank: i + 1,
         }));
-        setEntries(mapped as (LeaderboardEntry & { username: string; display_name: string | null; avatar_url: string | null; personality_type: string | null })[]);
+        setEntries(mapped as any);
       }
 
       const { data: { user } } = await supabase.auth.getUser();
       if (user && data) {
-        const me = data.find((e: Record<string, unknown>) => e.user_id === user.id);
-        if (me) setMyRank(me.rank as number);
+        const myIndex = data.findIndex((u) => u.id === user.id);
+        if (myIndex !== -1) setMyRank(myIndex + 1);
       }
 
       setIsLoading(false);

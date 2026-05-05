@@ -1,5 +1,11 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import dns from 'dns';
+
+// FORCE IPv4 FIRST to fix 10s DNS timeouts on Windows/Certain ISPs
+if (dns && typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
 
 export async function createClient() {
   const cookieStore = await cookies();

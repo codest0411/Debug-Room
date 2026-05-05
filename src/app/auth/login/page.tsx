@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { loginUser } from './actions';
 import { MatrixRain } from '@/components/effects/MatrixRain';
 
 export default function LoginPage() {
@@ -14,18 +14,23 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    const supabase = createClient();
-    const { error: err } = await supabase.auth.signInWithPassword({ email, password });
-    if (err) {
-      setError(err.message);
+
+    const formData = new FormData(e.currentTarget);
+    const result = await loginUser(formData);
+
+    if (result.error) {
+      setError(result.error);
       setIsLoading(false);
-    } else {
-      router.push('/hub');
+      return;
     }
+
+    // If it's a regular user or admin, they can access the hub
+    router.push('/hub');
+    router.refresh();
   };
 
   return (
@@ -47,12 +52,12 @@ export default function LoginPage() {
           )}
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {[
-              { label: 'EMAIL', value: email, onChange: setEmail, type: 'email', placeholder: 'dev@company.com' },
-              { label: 'PASSWORD', value: password, onChange: setPassword, type: 'password', placeholder: '••••••••' },
-            ].map(({ label, value, onChange, type, placeholder }) => (
+              { label: 'EMAIL', name: 'email', value: email, onChange: setEmail, type: 'email', placeholder: 'dev@company.com' },
+              { label: 'PASSWORD', name: 'password', value: password, onChange: setPassword, type: 'password', placeholder: '••••••••' },
+            ].map(({ label, name, value, onChange, type, placeholder }) => (
               <div key={label}>
                 <label style={{ display: 'block', fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: 'var(--font-display)', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</label>
-                <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} required
+                <input name={name} type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} required
                   style={{ width: '100%', padding: '12px 16px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text-primary)', fontFamily: 'var(--font-code)', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }}
                   onFocus={(e) => (e.target.style.borderColor = 'var(--accent)')}
                   onBlur={(e) => (e.target.style.borderColor = 'var(--border)')} />

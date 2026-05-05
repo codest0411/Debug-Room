@@ -106,6 +106,7 @@ export default function AdminRoomsPage() {
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     <div className="badge badge-outline" style={{ fontSize: '0.6rem' }}>{room.language}</div>
                     <div className="badge badge-outline" style={{ fontSize: '0.6rem' }}>{room.difficulty_label}</div>
+                    <div className="badge badge-outline" style={{ fontSize: '0.6rem', borderColor: '#9D4EDD', color: '#9D4EDD' }}>{room.total_puzzles} PUZZLES</div>
                   </div>
                 </div>
                 <div style={{ padding: '12px 16px', background: '#1A1A1A', borderTop: '1px solid #222', display: 'flex', gap: 8 }}>
