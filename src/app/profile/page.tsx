@@ -7,11 +7,13 @@ import { createClient } from '@/lib/supabase/client';
 import { MatrixRain } from '@/components/effects/MatrixRain';
 import type { User } from '@/types';
 import { useRouter } from 'next/navigation';
+import { ProfileEditModal } from './ProfileEditModal';
 
 export default function ProfilePage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     async function loadProfile() {
@@ -78,7 +80,10 @@ export default function ProfilePage() {
         <Link href="/hub" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontFamily: 'var(--font-display)', fontSize: '0.8rem' }}>
           ← BACK TO HUB
         </Link>
-        <button onClick={handleLogout} className="btn-ghost" style={{ padding: '6px 16px', fontSize: '0.75rem', borderColor: 'var(--danger)', color: 'var(--danger)' }}>LOGOUT</button>
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button onClick={() => setIsEditModalOpen(true)} className="btn-ghost" style={{ padding: '6px 16px', fontSize: '0.75rem', borderColor: 'var(--accent)', color: 'var(--accent)' }}>EDIT PROFILE</button>
+          <button onClick={handleLogout} className="btn-ghost" style={{ padding: '6px 16px', fontSize: '0.75rem', borderColor: 'var(--danger)', color: 'var(--danger)' }}>LOGOUT</button>
+        </div>
       </nav>
 
       <div style={{ 
@@ -106,13 +111,30 @@ export default function ProfilePage() {
         >
           <div style={{ display: 'flex', gap: 40, alignItems: 'center', flexWrap: 'wrap' }}>
             {/* Avatar / Level Ring */}
-            <div style={{ position: 'relative', width: 120, height: 120, borderRadius: '50%', background: 'var(--surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--accent)', boxShadow: '0 0 20px var(--accent-dim)' }}>
-              <div style={{ fontSize: 48 }}>{user.personality_type?.includes('NINJA') ? '🥷' : '💻'}</div>
-              <div className="badge badge-success" style={{ position: 'absolute', bottom: -10, left: '50%', transform: 'translateX(-50%)' }}>LVL {user.level || 1}</div>
+            <div style={{ position: 'relative', width: 120, height: 120 }}>
+              <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'var(--surface-2)', border: '1px solid var(--accent)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 20px var(--accent-dim)' }}>
+                {user.avatar_url ? (
+                  <img src={user.avatar_url} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ fontSize: 48 }}>{user.personality_type?.includes('NINJA') ? '🥷' : '💻'}</div>
+                )}
+              </div>
+              <div className="badge badge-success" style={{ 
+                position: 'absolute', 
+                bottom: -5, 
+                right: -5, 
+                zIndex: 10, 
+                padding: '4px 10px',
+                fontSize: '0.7rem',
+                boxShadow: '0 0 15px var(--accent-dim)',
+                border: '1px solid var(--accent)'
+              }}>
+                LVL {user.level || 1}
+              </div>
             </div>
 
             <div style={{ flex: 1 }}>
-              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: 8 }}>{user.username}</h1>
+              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: 8 }}>{user.display_name || user.username}</h1>
               <div style={{ color: 'var(--accent-2)', fontFamily: 'var(--font-display)', fontSize: '0.9rem', marginBottom: 20 }}>
                 {user.personality_type ? user.personality_type.replace(/_/g, ' ') : 'UNCLASSIFIED DEVELOPER'}
               </div>
@@ -142,6 +164,12 @@ export default function ProfilePage() {
 
         </motion.div>
       </div>
+
+      <ProfileEditModal 
+        user={user} 
+        isOpen={isEditModalOpen} 
+        onClose={() => setIsEditModalOpen(false)} 
+      />
     </div>
   );
 }

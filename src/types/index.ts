@@ -20,6 +20,7 @@ export interface User {
   username: string;
   display_name: string | null;
   avatar_url: string | null;
+  mobile_number: string | null;
   bio: string | null;
   email: string;
   xp: number;
