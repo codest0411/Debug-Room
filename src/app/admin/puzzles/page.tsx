@@ -13,6 +13,7 @@ export default function AdminPuzzlesPage() {
   const [selectedRoom, setSelectedRoom] = useState<string>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPuzzle, setEditingPuzzle] = useState<any | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const supabase = createClient();
 
@@ -124,7 +125,17 @@ export default function AdminPuzzlesPage() {
                   </td>
                   <td style={{ padding: '12px 16px', fontSize: '0.75rem', color: '#666' }}>{p.validation_type}</td>
                   <td style={{ padding: '12px 16px', fontSize: '0.75rem', color: '#9D4EDD', fontFamily: 'monospace' }}>{p.xp_reward} XP</td>
-                  <td style={{ padding: '12px 16px', display: 'flex', gap: 8 }}>
+                  <td style={{ padding: '12px 16px', display: 'flex', gap: 12 }}>
+                    <button 
+                      onClick={() => { 
+                        navigator.clipboard.writeText(p.validation_value);
+                        setCopiedId(p.id);
+                        setTimeout(() => setCopiedId(null), 2000);
+                      }} 
+                      style={{ background: 'none', border: 'none', color: copiedId === p.id ? '#00FF88' : '#888', cursor: 'pointer', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: 4 }}
+                    >
+                      {copiedId === p.id ? '✓ Copied' : '📄 Copy Ans'}
+                    </button>
                     <button onClick={() => { setEditingPuzzle(p); setIsModalOpen(true); }} style={{ background: 'none', border: 'none', color: '#00D9FF', cursor: 'pointer', fontSize: '0.75rem' }}>Edit</button>
                     <button onClick={() => handleDelete(p.id)} style={{ background: 'none', border: 'none', color: '#FF4444', cursor: 'pointer', fontSize: '0.75rem' }}>Delete</button>
                   </td>

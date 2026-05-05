@@ -36,7 +36,9 @@ function RoomCard({
   canAccess: boolean;
 }) {
   const color = ROOM_COLORS[room.room_number] || 'var(--accent)';
-  const isCompleted = progress?.status === 'completed' || progress?.status === 'perfect';
+  const isCompleted = progress?.status === 'completed' || 
+    progress?.status === 'perfect' || 
+    (progress && progress.puzzles_solved >= progress.puzzles_total && progress.puzzles_total > 0);
   const isInProgress = progress?.status === 'in_progress';
   const isLocked = !canAccess && !isCompleted && !isInProgress && room.room_number > 1;
   const completionPct =
@@ -355,7 +357,10 @@ export default function HubPage() {
               
               const prevRoom = i > 0 ? rooms[i-1] : null;
               const prevProgress = prevRoom ? progress.find(p => p.room_id === prevRoom.id) : null;
-              const isPrevCompleted = i === 0 || (prevProgress?.status === 'completed' || prevProgress?.status === 'perfect');
+              const isPrevCompleted = i === 0 || 
+                (prevProgress?.status === 'completed' || 
+                 prevProgress?.status === 'perfect' ||
+                 (prevProgress && prevProgress.puzzles_solved >= prevProgress.puzzles_total && prevProgress.puzzles_total > 0));
 
               return (
                 <motion.div
