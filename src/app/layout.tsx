@@ -1,10 +1,8 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { inter } from '@/lib/fonts';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Providers } from './providers';
-
-const inter = Inter({ subsets: ['latin'], display: 'swap', preload: true });
 
 export const metadata: Metadata = {
   title: 'THE DEBUG ROOM — Coder Escape Room',
@@ -24,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

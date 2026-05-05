@@ -19,7 +19,7 @@ export default async function AdminDashboardPage() {
     { data: xpData },
     { data: recent },
     { data: puzzleStats },
-    { count: totalRoomsCompleted },
+    { data: roomProgressData },
     { count: totalPuzzlesSolved },
   ] = await Promise.all([
     supabase.from('users').select('*', { count: 'exact', head: true }),
@@ -32,9 +32,15 @@ export default async function AdminDashboardPage() {
     supabase.from('users').select('xp'),
     supabase.from('users').select('username, email, created_at, xp').order('created_at', { ascending: false }).limit(5),
     supabase.from('puzzle_analytics').select('*, puzzle:puzzle_id(title, room_id)').order('solve_rate', { ascending: true }).limit(5),
-    supabase.from('room_progress').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
+    supabase.from('room_progress').select('user_id, status, puzzles_solved, puzzles_total'),
     supabase.from('puzzle_attempts').select('*', { count: 'exact', head: true }).eq('is_correct', true),
   ]);
+
+  const smartTotalRoomsCompleted = (roomProgressData || []).filter((p: any) => 
+    p.status === 'completed' || 
+    p.status === 'perfect' || 
+    (p.puzzles_solved >= p.puzzles_total && p.puzzles_total > 0)
+  ).length;
 
   const totalXP = (xpData || []).reduce((sum: number, u: { xp: number }) => sum + (u.xp || 0), 0);
 
@@ -47,7 +53,7 @@ export default async function AdminDashboardPage() {
     totalXP,
     activeSessions: activeSessions || 0,
     openReports: openReports || 0,
-    totalRoomsCompleted: totalRoomsCompleted || 0,
+    totalRoomsCompleted: smartTotalRoomsCompleted,
     totalPuzzlesSolved: totalPuzzlesSolved || 0,
   };
 
