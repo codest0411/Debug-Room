@@ -38,7 +38,7 @@ export function MatrixRain() {
 
       // Get dynamic accent color from CSS variables
       const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#00FF88';
-      
+
       ctx.font = `${fontSize}px "JetBrains Mono", monospace`;
 
       for (let i = 0; i < drops.length; i++) {

@@ -124,7 +124,7 @@ function RoomCard({ room }: { room: (typeof ROOMS_PREVIEW)[0] }) {
             {room.name}
           </div>
           <div style={{ marginTop: 'auto' }}>
-             <DifficultyStars count={room.difficulty} />
+            <DifficultyStars count={room.difficulty} />
           </div>
         </div>
       </motion.div>
@@ -255,8 +255,8 @@ export default function LandingPage() {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
               <Link href="/auth/login">
-                <button 
-                  className="btn-ghost" 
+                <button
+                  className="btn-ghost"
                   style={{ padding: '8px 20px', fontSize: '0.75rem' }}
                   onMouseEnter={() => playSound('hover')}
                   onClick={() => playSound('click')}
@@ -265,8 +265,8 @@ export default function LandingPage() {
                 </button>
               </Link>
               <Link href="/auth/signup">
-                <button 
-                  className="btn-primary" 
+                <button
+                  className="btn-primary"
                   style={{ padding: '8px 20px', fontSize: '0.75rem' }}
                   onMouseEnter={() => playSound('hover')}
                   onClick={() => playSound('click')}
@@ -370,8 +370,8 @@ export default function LandingPage() {
                 </button>
               </Link>
               <Link href="#rooms">
-                <button 
-                  className="btn-ghost" 
+                <button
+                  className="btn-ghost"
                   style={{ fontSize: '0.9rem', padding: '16px 36px' }}
                   onMouseEnter={() => playSound('hover')}
                   onClick={() => playSound('click')}
@@ -650,7 +650,7 @@ export default function LandingPage() {
               <div style={{ color: 'var(--accent)', fontSize: '0.7rem', letterSpacing: '0.2em' }}>[ LIVE_SECURITY_FEED ]</div>
               <div style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>UPLINK_STABLE // 128.0.0.1</div>
             </div>
-            
+
             <div style={{ height: 200, overflow: 'hidden', display: 'flex', flexDirection: 'column-reverse' }}>
               {[
                 'BYPASSING FIREWALL... SUCCESS',
