@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { MatrixRain } from '@/components/effects/MatrixRain';
 import { MouseTrail } from '@/components/effects/MouseTrail';
-import { BootSequence } from '@/components/effects/BootSequence';
 import { ThemePanel } from '@/components/theme/ThemePanel';
 
 const ROOMS_PREVIEW = [
@@ -166,9 +165,11 @@ function SurvivorCard({ survivor }: { survivor: (typeof SURVIVORS)[0] }) {
 }
 
 export default function LandingPage() {
-  const [showContent, setShowContent] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [bootDone, setBootDone] = useState(false);
+  const [typewriterText, setTypewriterText] = useState('');
+  const [showCursor, setShowCursor] = useState(true);
+
+  const fullSubtitle = 'You are trapped inside a broken production system.';
 
   useEffect(() => {
     async function checkUser() {
@@ -177,20 +178,8 @@ export default function LandingPage() {
       if (user) setIsLoggedIn(true);
     }
     checkUser();
-  }, []);
 
-  const [typewriterText, setTypewriterText] = useState('');
-  const [showCursor, setShowCursor] = useState(true);
-
-  const fullSubtitle = 'You are trapped inside a broken production system.';
-
-  const handleBootComplete = useCallback(() => {
-    setBootDone(true);
-  }, []);
-
-  useEffect(() => {
-    if (!bootDone) return;
-
+    // Typewriter effect
     let i = 0;
     const timer = setInterval(() => {
       if (i < fullSubtitle.length) {
@@ -209,7 +198,7 @@ export default function LandingPage() {
       clearInterval(timer);
       clearInterval(cursorTimer);
     };
-  }, [bootDone]);
+  }, []);
 
   const tickerText = TICKER_ITEMS.join(' ◆ ');
 
@@ -218,503 +207,475 @@ export default function LandingPage() {
       <MatrixRain />
       <MouseTrail />
 
-      <BootSequence onComplete={handleBootComplete} />
-
       <AnimatePresence>
-        {bootDone && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            style={{ position: 'relative', zIndex: 1 }}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          style={{ position: 'relative', zIndex: 1 }}
+        >
+          {/* NAVBAR */}
+          <nav
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 100,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '16px 40px',
+              borderBottom: '1px solid var(--border)',
+              backdropFilter: 'blur(20px)',
+              background: 'rgba(10,10,15,0.8)',
+            }}
           >
-            {/* NAVBAR */}
-            <nav
-              style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                zIndex: 100,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '16px 40px',
-                borderBottom: '1px solid var(--border)',
-                backdropFilter: 'blur(20px)',
-                background: 'rgba(10,10,15,0.8)',
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontWeight: 800,
-                  fontSize: '1.1rem',
-                  color: 'var(--accent)',
-                  letterSpacing: '0.1em',
-                  textShadow: '0 0 10px var(--accent)',
-                }}
-              >
-                {'>'} DEBUG_ROOM
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-                <Link href="/auth/login">
-                  <button className="btn-ghost" style={{ padding: '8px 20px', fontSize: '0.75rem' }}>
-                    Login
-                  </button>
-                </Link>
-                <Link href="/auth/signup">
-                  <button className="btn-primary" style={{ padding: '8px 20px', fontSize: '0.75rem' }}>
-                    Sign Up
-                  </button>
-                </Link>
-                <ThemePanel />
-              </div>
-            </nav>
-
-            {/* HERO SECTION */}
-            <section
-              style={{
-                minHeight: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                padding: '120px 40px 60px',
-                position: 'relative',
-              }}
-            >
-              {/* Status badge */}
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                style={{ marginBottom: 32 }}
-              >
-                <span className="badge badge-danger">
-                  ⚠ SYSTEM CRITICAL — CONTAINMENT BREACH ACTIVE
-                </span>
-              </motion.div>
-
-              {/* Main title */}
-              <motion.h1
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
-                style={{
-                  fontSize: 'clamp(3rem, 10vw, 7rem)',
-                  fontWeight: 900,
-                  lineHeight: 1,
-                  marginBottom: 24,
-                  letterSpacing: '-0.03em',
-                }}
-              >
-                <GlitchText text="THE" className="text-neon" />
-                <br />
-                <GlitchText
-                  text="DEBUG ROOM"
-                  className="text-gradient"
-                />
-              </motion.h1>
-
-              {/* Typewriter subtitle */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                style={{
-                  fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
-                  color: 'var(--text-secondary)',
-                  marginBottom: 12,
-                  fontFamily: 'var(--font-display)',
-                  minHeight: '2em',
-                }}
-              >
-                {typewriterText}
-                {showCursor && <span style={{ color: 'var(--accent)' }}>|</span>}
-              </motion.div>
-
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2 }}
-                style={{
-                  fontSize: '1rem',
-                  color: 'var(--accent)',
-                  marginBottom: 48,
-                  fontFamily: 'var(--font-display)',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                Only true developers escape alive.
-              </motion.p>
-
-              {/* CTA Buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.2 }}
-                style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 80 }}
-              >
-                <Link href={isLoggedIn ? "/hub" : "/auth/login"}>
-                  <button
-                    className="btn-primary animate-pulse-neon"
-                    style={{ fontSize: '0.9rem', padding: '16px 36px' }}
-                  >
-                    {isLoggedIn ? '⚡ CONTINUE PROGRESS' : '⚡ ENTER THE DEBUG ROOM'}
-                  </button>
-                </Link>
-                <Link href="#rooms">
-                  <button className="btn-ghost" style={{ fontSize: '0.9rem', padding: '16px 36px' }}>
-                    VIEW ESCAPE ROOMS
-                  </button>
-                </Link>
-              </motion.div>
-
-              {/* Scroll indicator */}
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontFamily: 'var(--font-display)' }}
-              >
-                ↓ SCROLL TO EXPLORE ↓
-              </motion.div>
-            </section>
-
-            {/* STATUS TICKER */}
             <div
               style={{
-                background: 'var(--danger)',
-                padding: '8px 0',
-                overflow: 'hidden',
+                fontFamily: 'var(--font-display)',
+                fontWeight: 800,
+                fontSize: '1.1rem',
+                color: 'var(--accent)',
+                letterSpacing: '0.1em',
+                textShadow: '0 0 10px var(--accent)',
               }}
             >
-              <div className="ticker-wrap">
-                <div className="ticker-content">
-                  <span
-                    style={{
-                      color: '#000',
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      letterSpacing: '0.1em',
-                    }}
-                  >
-                    {tickerText} ◆ {tickerText} ◆
-                  </span>
-                </div>
-              </div>
+              {'>'} DEBUG_ROOM
             </div>
 
-            {/* STATS BAR */}
-            <motion.section
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+              <Link href="/auth/login">
+                <button className="btn-ghost" style={{ padding: '8px 20px', fontSize: '0.75rem' }}>
+                  Login
+                </button>
+              </Link>
+              <Link href="/auth/signup">
+                <button className="btn-primary" style={{ padding: '8px 20px', fontSize: '0.75rem' }}>
+                  Sign Up
+                </button>
+              </Link>
+              <ThemePanel />
+            </div>
+          </nav>
+
+          {/* HERO SECTION */}
+          <section
+            style={{
+              minHeight: '100vh',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              padding: '120px 40px 60px',
+              position: 'relative',
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              style={{ marginBottom: 32 }}
+            >
+              <span className="badge badge-danger">
+                ⚠ SYSTEM CRITICAL — CONTAINMENT BREACH ACTIVE
+              </span>
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
               style={{
-                padding: '60px 40px',
-                display: 'flex',
-                justifyContent: 'center',
-                gap: 60,
-                flexWrap: 'wrap',
-                borderBottom: '1px solid var(--border)',
+                fontSize: 'clamp(3rem, 10vw, 7rem)',
+                fontWeight: 900,
+                lineHeight: 1,
+                marginBottom: 24,
+                letterSpacing: '-0.03em',
+              }}
+            >
+              <GlitchText text="THE" className="text-neon" />
+              <br />
+              <GlitchText
+                text="DEBUG ROOM"
+                className="text-gradient"
+              />
+            </motion.h1>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+              style={{
+                fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
+                color: 'var(--text-secondary)',
+                marginBottom: 12,
+                fontFamily: 'var(--font-display)',
+                minHeight: '2em',
+              }}
+            >
+              {typewriterText}
+              {showCursor && <span style={{ color: 'var(--accent)' }}>|</span>}
+            </motion.div>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 2 }}
+              style={{
+                fontSize: '1rem',
+                color: 'var(--accent)',
+                marginBottom: 48,
+                fontFamily: 'var(--font-display)',
+                letterSpacing: '0.05em',
+              }}
+            >
+              Only true developers escape alive.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.2 }}
+              style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 80 }}
+            >
+              <Link href={isLoggedIn ? "/hub" : "/auth/login"}>
+                <button
+                  className="btn-primary animate-pulse-neon"
+                  style={{ fontSize: '0.9rem', padding: '16px 36px' }}
+                >
+                  {isLoggedIn ? '⚡ CONTINUE PROGRESS' : '⚡ ENTER THE DEBUG ROOM'}
+                </button>
+              </Link>
+              <Link href="#rooms">
+                <button className="btn-ghost" style={{ fontSize: '0.9rem', padding: '16px 36px' }}>
+                  VIEW ESCAPE ROOMS
+                </button>
+              </Link>
+            </motion.div>
+
+            <motion.div
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontFamily: 'var(--font-display)' }}
+            >
+              ↓ SCROLL TO EXPLORE ↓
+            </motion.div>
+          </section>
+
+          {/* STATUS TICKER */}
+          <div
+            style={{
+              background: 'var(--danger)',
+              padding: '8px 0',
+              overflow: 'hidden',
+            }}
+          >
+            <div className="ticker-wrap">
+              <div className="ticker-content">
+                <span
+                  style={{
+                    color: '#000',
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.1em',
+                  }}
+                >
+                  {tickerText} ◆ {tickerText} ◆
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* STATS BAR */}
+          <motion.section
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            style={{
+              padding: '60px 40px',
+              display: 'flex',
+              justifyContent: 'center',
+              gap: 60,
+              flexWrap: 'wrap',
+              borderBottom: '1px solid var(--border)',
+            }}
+          >
+            {[
+              { value: '10', label: 'Escape Rooms' },
+              { value: '60+', label: 'Real Puzzles' },
+              { value: '8+', label: 'Languages' },
+              { value: '20', label: 'Achievements' },
+            ].map((stat) => (
+              <div key={stat.label} style={{ textAlign: 'center' }}>
+                <div
+                  style={{
+                    fontSize: '3rem',
+                    fontFamily: 'var(--font-display)',
+                    fontWeight: 800,
+                    color: 'var(--accent)',
+                    textShadow: '0 0 20px var(--accent)',
+                    lineHeight: 1,
+                  }}
+                >
+                  {stat.value}
+                </div>
+                <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: 8 }}>
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </motion.section>
+
+          {/* ROOM PREVIEW */}
+          <motion.section
+            id="rooms"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            style={{ padding: '80px 40px' }}
+          >
+            <div style={{ textAlign: 'center', marginBottom: 48 }}>
+              <h2
+                style={{
+                  fontSize: '2.5rem',
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                  marginBottom: 12,
+                }}
+              >
+                10 ROOMS. 0 MERCY.
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1rem' }}>
+                Each room is a broken environment. Your job: fix it and escape.
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+                gap: 16,
+                maxWidth: 1200,
+                margin: '0 auto',
+              }}
+            >
+              {ROOMS_PREVIEW.map((room) => (
+                <RoomCard key={room.number} room={room} />
+              ))}
+            </div>
+          </motion.section>
+
+          {/* HOW IT WORKS */}
+          <motion.section
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            style={{
+              padding: '80px 40px',
+              background: 'var(--surface)',
+              borderTop: '1px solid var(--border)',
+              borderBottom: '1px solid var(--border)',
+            }}
+          >
+            <div style={{ textAlign: 'center', marginBottom: 60 }}>
+              <h2
+                style={{
+                  fontSize: '2.5rem',
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
+                HOW IT WORKS
+              </h2>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: 32,
+                maxWidth: 1000,
+                margin: '0 auto',
               }}
             >
               {[
-                { value: '10', label: 'Escape Rooms' },
-                { value: '60+', label: 'Real Puzzles' },
-                { value: '8+', label: 'Languages' },
-                { value: '20', label: 'Achievements' },
-              ].map((stat) => (
-                <div key={stat.label} style={{ textAlign: 'center' }}>
+                {
+                  step: '01',
+                  icon: '🔐',
+                  title: 'Gain System Access',
+                  desc: 'Create your developer profile. Your progress, achievements, and XP will be tracked in real-time.',
+                },
+                {
+                  step: '02',
+                  icon: '🚪',
+                  title: 'Enter the Escape Rooms',
+                  desc: 'Start with HTML Island. Work your way to The Mainframe. Each room harder than the last.',
+                },
+                {
+                  step: '03',
+                  icon: '🏆',
+                  title: 'Solve. Escape. Become Legend.',
+                  desc: 'Fix real broken code. Earn XP. Unlock badges. Claim your spot on the global leaderboard.',
+                },
+              ].map((step) => (
+                <motion.div
+                  key={step.step}
+                  whileHover={{ scale: 1.02 }}
+                  className="glass-accent"
+                  style={{ borderRadius: 12, padding: 32, textAlign: 'center' }}
+                >
                   <div
                     style={{
-                      fontSize: '3rem',
                       fontFamily: 'var(--font-display)',
-                      fontWeight: 800,
+                      fontSize: '0.65rem',
                       color: 'var(--accent)',
-                      textShadow: '0 0 20px var(--accent)',
-                      lineHeight: 1,
+                      letterSpacing: '0.2em',
+                      marginBottom: 16,
                     }}
                   >
-                    {stat.value}
+                    STEP {step.step}
                   </div>
-                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: 8 }}>
-                    {stat.label}
-                  </div>
-                </div>
+                  <div style={{ fontSize: 40, marginBottom: 16 }}>{step.icon}</div>
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '1rem',
+                      fontWeight: 700,
+                      color: 'var(--text-primary)',
+                      marginBottom: 12,
+                    }}
+                  >
+                    {step.title}
+                  </h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.7 }}>
+                    {step.desc}
+                  </p>
+                </motion.div>
               ))}
-            </motion.section>
+            </div>
+          </motion.section>
 
-            {/* ROOM PREVIEW */}
-            <motion.section
-              id="rooms"
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              style={{ padding: '80px 40px' }}
-            >
-              <div style={{ textAlign: 'center', marginBottom: 48 }}>
-                <h2
-                  style={{
-                    fontSize: '2.5rem',
-                    fontFamily: 'var(--font-display)',
-                    fontWeight: 800,
-                    color: 'var(--text-primary)',
-                    marginBottom: 12,
-                  }}
-                >
-                  10 ROOMS. 0 MERCY.
-                </h2>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '1rem' }}>
-                  Each room is a broken environment. Your job: fix it and escape.
-                </p>
-              </div>
-
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-                  gap: 16,
-                  maxWidth: 1200,
-                  margin: '0 auto',
-                }}
-              >
-                {ROOMS_PREVIEW.map((room) => (
-                  <RoomCard key={room.number} room={room} />
-                ))}
-              </div>
-            </motion.section>
-
-            {/* HOW IT WORKS */}
-            <motion.section
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              style={{
-                padding: '80px 40px',
-                background: 'var(--surface)',
-                borderTop: '1px solid var(--border)',
-                borderBottom: '1px solid var(--border)',
-              }}
-            >
-              <div style={{ textAlign: 'center', marginBottom: 60 }}>
-                <h2
-                  style={{
-                    fontSize: '2.5rem',
-                    fontFamily: 'var(--font-display)',
-                    fontWeight: 800,
-                    color: 'var(--text-primary)',
-                  }}
-                >
-                  HOW IT WORKS
-                </h2>
-              </div>
-
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                  gap: 32,
-                  maxWidth: 1000,
-                  margin: '0 auto',
-                }}
-              >
-                {[
-                  {
-                    step: '01',
-                    icon: '🔐',
-                    title: 'Gain System Access',
-                    desc: 'Create your developer profile. Your progress, achievements, and XP will be tracked in real-time.',
-                  },
-                  {
-                    step: '02',
-                    icon: '🚪',
-                    title: 'Enter the Escape Rooms',
-                    desc: 'Start with HTML Island. Work your way to The Mainframe. Each room harder than the last.',
-                  },
-                  {
-                    step: '03',
-                    icon: '🏆',
-                    title: 'Solve. Escape. Become Legend.',
-                    desc: 'Fix real broken code. Earn XP. Unlock badges. Claim your spot on the global leaderboard.',
-                  },
-                ].map((step) => (
-                  <motion.div
-                    key={step.step}
-                    whileHover={{ scale: 1.02 }}
-                    className="glass-accent"
-                    style={{ borderRadius: 12, padding: 32, textAlign: 'center' }}
-                  >
-                    <div
-                      style={{
-                        fontFamily: 'var(--font-display)',
-                        fontSize: '0.65rem',
-                        color: 'var(--accent)',
-                        letterSpacing: '0.2em',
-                        marginBottom: 16,
-                      }}
-                    >
-                      STEP {step.step}
-                    </div>
-                    <div style={{ fontSize: 40, marginBottom: 16 }}>{step.icon}</div>
-                    <h3
-                      style={{
-                        fontFamily: 'var(--font-display)',
-                        fontSize: '1rem',
-                        fontWeight: 700,
-                        color: 'var(--text-primary)',
-                        marginBottom: 12,
-                      }}
-                    >
-                      {step.title}
-                    </h3>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.7 }}>
-                      {step.desc}
-                    </p>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.section>
-
-            {/* SURVIVOR LOG */}
-            <motion.section
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              style={{ padding: '80px 40px' }}
-            >
-              <div style={{ textAlign: 'center', marginBottom: 48 }}>
-                <h2
-                  style={{
-                    fontSize: '2.5rem',
-                    fontFamily: 'var(--font-display)',
-                    fontWeight: 800,
-                    color: 'var(--text-primary)',
-                    marginBottom: 12,
-                  }}
-                >
-                  SURVIVOR LOG
-                </h2>
-                <p style={{ color: 'var(--text-secondary)' }}>Testimonials from those who made it out.</p>
-              </div>
-
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                  gap: 20,
-                  maxWidth: 1200,
-                  margin: '0 auto',
-                }}
-              >
-                {SURVIVORS.map((s, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    viewport={{ once: true }}
-                  >
-                    <SurvivorCard survivor={s} />
-                  </motion.div>
-                ))}
-              </div>
-            </motion.section>
-
-            {/* FINAL CTA */}
-            <motion.section
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              style={{
-                padding: '100px 40px',
-                textAlign: 'center',
-                background: 'var(--surface)',
-                borderTop: '1px solid var(--border)',
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '0.75rem',
-                  color: 'var(--accent)',
-                  letterSpacing: '0.3em',
-                  textTransform: 'uppercase',
-                  marginBottom: 24,
-                }}
-              >
-                ARE YOU READY, DEVELOPER?
-              </div>
+          {/* SURVIVOR LOG */}
+          <motion.section
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            style={{ padding: '80px 40px' }}
+          >
+            <div style={{ textAlign: 'center', marginBottom: 48 }}>
               <h2
                 style={{
-                  fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                  fontSize: '2.5rem',
                   fontFamily: 'var(--font-display)',
-                  fontWeight: 900,
+                  fontWeight: 800,
                   color: 'var(--text-primary)',
-                  marginBottom: 32,
-                  lineHeight: 1.1,
+                  marginBottom: 12,
                 }}
               >
-                The production server is down.
-                <br />
-                <span className="text-neon">You are the only hope.</span>
+                SURVIVOR LOG
               </h2>
-              <Link href="/auth/login">
-                <button
-                  className="btn-primary animate-pulse-neon"
-                  style={{ fontSize: '1rem', padding: '18px 48px' }}
-                >
-                  ⚡ BEGIN THE ESCAPE
-                </button>
-              </Link>
-            </motion.section>
+              <p style={{ color: 'var(--text-secondary)' }}>Testimonials from those who made it out.</p>
+            </div>
 
-            {/* FOOTER */}
-            <footer
+            <div
               style={{
-                padding: '32px 40px',
-                borderTop: '1px solid var(--border)',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                gap: 16,
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                gap: 20,
+                maxWidth: 1200,
+                margin: '0 auto',
               }}
             >
-              <div
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  color: 'var(--text-muted)',
-                  fontSize: '0.75rem',
-                }}
+              {SURVIVORS.map((s, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <SurvivorCard survivor={s} />
+                </motion.div>
+              ))}
+            </div>
+          </motion.section>
+
+          {/* FINAL CTA */}
+          <motion.section
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            style={{
+              padding: '100px 40px',
+              textAlign: 'center',
+              background: 'var(--surface)',
+              borderTop: '1px solid var(--border)',
+            }}
+          >
+            <div
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '0.75rem',
+                color: 'var(--accent)',
+                letterSpacing: '0.3em',
+                textTransform: 'uppercase',
+                marginBottom: 24,
+              }}
+            >
+              ARE YOU READY, DEVELOPER?
+            </div>
+            <h2
+              style={{
+                fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                fontFamily: 'var(--font-display)',
+                fontWeight: 900,
+                color: 'var(--text-primary)',
+                marginBottom: 32,
+                lineHeight: 1.1,
+              }}
+            >
+              The production server is down.
+              <br />
+              <span className="text-neon">You are the only hope.</span>
+            </h2>
+            <Link href="/auth/login">
+              <button
+                className="btn-primary animate-pulse-neon"
+                style={{ fontSize: '1rem', padding: '18px 48px' }}
               >
-                {'>'} DEBUG_ROOM v2.0 — Made by developers. For developers. No designers were harmed.
-              </div>
-              <div style={{ display: 'flex', gap: 24 }}>
-                {['GitHub', 'Discord', 'Twitter'].map((link) => (
-                  <a
-                    key={link}
-                    href="#"
-                    style={{
-                      color: 'var(--text-muted)',
-                      textDecoration: 'none',
-                      fontSize: '0.75rem',
-                      fontFamily: 'var(--font-display)',
-                      transition: 'color 0.2s',
-                    }}
-                    onMouseEnter={(e) => ((e.target as HTMLElement).style.color = 'var(--accent)')}
-                    onMouseLeave={(e) => ((e.target as HTMLElement).style.color = 'var(--text-muted)')}
-                  >
-                    {link}
-                  </a>
-                ))}
-              </div>
-            </footer>
-          </motion.div>
-        )}
+                ⚡ BEGIN THE ESCAPE
+              </button>
+            </Link>
+          </motion.section>
+
+          {/* FOOTER */}
+          <footer
+            style={{
+              padding: '32px 40px',
+              borderTop: '1px solid var(--border)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 16,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: 'var(--font-display)',
+                color: 'var(--text-muted)',
+                fontSize: '0.75rem',
+              }}
+            >
+              {'>'} DEBUG_ROOM v2.0 — Made by developers. For developers. No designers were harmed.
+            </div>
+          </footer>
+        </motion.div>
       </AnimatePresence>
     </>
   );

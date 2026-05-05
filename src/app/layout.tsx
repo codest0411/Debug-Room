@@ -3,6 +3,7 @@ import { inter } from '@/lib/fonts';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Providers } from './providers';
+import { SystemBootLoader } from '@/components/effects/SystemBootLoader';
 
 export const metadata: Metadata = {
   title: 'THE DEBUG ROOM — Coder Escape Room',
@@ -28,6 +29,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className={inter.className}>
+        <SystemBootLoader />
         <Providers>
           <ThemeProvider>
             {children}
