@@ -252,15 +252,26 @@ export default function RoomPage() {
       setTimeout(() => setCorrectFlash(false), 600);
 
       if (userId) {
-        // Manually update progress to ensure it's not stuck in "In Progress"
-        await supabase.rpc('complete_puzzle', {
-          p_user_id: userId,
-          p_puzzle_id: currentPuzzle.id,
-          p_wrong_attempts: 0,
-          p_hints_used: usedHints.length,
-          p_time_taken_seconds: 0,
-          p_submitted_code: userCode,
-        });
+        // Check if already solved to prevent double counting stats
+        const { data: existingSuccess } = await supabase
+          .from('puzzle_attempts')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('puzzle_id', currentPuzzle.id)
+          .eq('is_correct', true)
+          .single();
+
+        if (!existingSuccess) {
+          // Manually update progress to ensure it's not stuck in "In Progress"
+          await supabase.rpc('complete_puzzle', {
+            p_user_id: userId,
+            p_puzzle_id: currentPuzzle.id,
+            p_wrong_attempts: 0,
+            p_hints_used: usedHints.length,
+            p_time_taken_seconds: 0,
+            p_submitted_code: userCode,
+          });
+        }
 
         if (room) {
           const { data: currentProg } = await supabase
@@ -270,6 +281,7 @@ export default function RoomPage() {
             .eq('room_id', room.id)
             .single();
 
+          const solvedCount = Math.min(Math.max(currentIdx + 1, currentProg?.puzzles_solved || 0), puzzles.length);
           const isLastPuzzle = currentIdx === puzzles.length - 1;
           const newStatus = (isLastPuzzle || currentProg?.status === 'completed' || currentProg?.status === 'perfect') 
             ? 'completed' 
@@ -278,11 +290,30 @@ export default function RoomPage() {
           await supabase.from('room_progress').upsert({
             user_id: userId,
             room_id: room.id,
-            puzzles_solved: Math.min(Math.max(currentIdx + 1, currentProg?.puzzles_solved || 0), puzzles.length),
+            puzzles_solved: solvedCount,
             status: newStatus,
             last_played_at: new Date().toISOString(),
             ...(newStatus === 'completed' ? { completed_at: new Date().toISOString() } : {})
           });
+
+          // If room completed, update the total count in users table
+          if (newStatus === 'completed' || (solvedCount >= (puzzles?.length || 0))) {
+            const { data: allProg } = await supabase
+              .from('room_progress')
+              .select('*')
+              .eq('user_id', userId);
+            
+            const count = (allProg || []).filter(p => 
+              p.status === 'completed' || 
+              p.status === 'perfect' || 
+              (p.puzzles_solved >= p.puzzles_total && p.puzzles_total > 0)
+            ).length;
+            
+            await supabase.from('users').update({ 
+              total_rooms_completed: count,
+              last_active_at: new Date().toISOString()
+            }).eq('id', userId);
+          }
         }
       }
 

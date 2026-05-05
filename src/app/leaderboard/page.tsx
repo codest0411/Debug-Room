@@ -21,7 +21,7 @@ export default function LeaderboardPage() {
       const supabase = createClient();
       const { data } = await supabase
         .from('users')
-        .select('id, username, display_name, avatar_url, personality_type, xp, created_at')
+        .select('id, username, display_name, avatar_url, personality_type, xp, total_rooms_completed, total_puzzles_solved, created_at')
         .order('xp', { ascending: false })
         .limit(100);
 
@@ -34,7 +34,9 @@ export default function LeaderboardPage() {
           avatar_url: u.avatar_url,
           personality_type: u.personality_type,
           total_xp: u.xp,
-          weekly_xp: u.xp, // Fallback if weekly table doesn't exist
+          weekly_xp: u.xp,
+          rooms_completed: u.total_rooms_completed || 0,
+          perfect_rooms: 0, // We can add a perfect_rooms column if needed later
           rank: i + 1,
         }));
         setEntries(mapped as any);

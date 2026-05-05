@@ -28,7 +28,26 @@ export default function ProfilePage() {
         .eq('id', authUser.id)
         .single();
       
-      if (data) setUser(data as User);
+      if (data) {
+        const userWithStats = data as User;
+        
+        // Fetch real-time unique counts
+        const [
+          { data: solvedPuzzles },
+          { count: uniqueRooms }
+        ] = await Promise.all([
+          supabase.from('puzzle_attempts').select('puzzle_id').eq('user_id', authUser.id).eq('is_correct', true),
+          supabase.from('room_progress').select('*', { count: 'exact', head: true }).eq('user_id', authUser.id).eq('status', 'completed')
+        ]);
+
+        const uniquePuzzleCount = new Set((solvedPuzzles || []).map(p => p.puzzle_id)).size;
+
+        setUser({
+          ...userWithStats,
+          total_puzzles_solved: uniquePuzzleCount,
+          total_rooms_completed: uniqueRooms || 0
+        });
+      }
       setIsLoading(false);
     }
     loadProfile();
