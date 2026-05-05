@@ -4,6 +4,12 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { Providers } from './providers';
 import { SystemBootLoader } from '@/components/effects/SystemBootLoader';
+import dns from 'dns';
+
+// FORCE IPv4 FIRST to fix 10s DNS timeouts on Windows/Certain ISPs
+if (dns && typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
 
 export const metadata: Metadata = {
   title: 'THE DEBUG ROOM — Coder Escape Room',

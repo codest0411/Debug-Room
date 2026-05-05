@@ -239,6 +239,8 @@ export default function LandingPage() {
                 color: 'var(--accent)',
                 letterSpacing: '0.1em',
                 textShadow: '0 0 10px var(--accent)',
+                cursor: 'default',
+                userSelect: 'none',
               }}
             >
               {'>'} DEBUG_ROOM
@@ -670,6 +672,8 @@ export default function LandingPage() {
                 fontFamily: 'var(--font-display)',
                 color: 'var(--text-muted)',
                 fontSize: '0.75rem',
+                cursor: 'default',
+                userSelect: 'none',
               }}
             >
               {'>'} DEBUG_ROOM v2.0 — Made by developers. For developers. No designers were harmed.

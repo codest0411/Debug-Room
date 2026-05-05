@@ -28,13 +28,16 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/auth/login');
 
   let user = null;
-  // ONLY check session if we are NOT on a login page to avoid 10s timeouts on public routes
+  // ONLY check session if we are NOT on a login page
   if (!isLoginPage) {
     try {
-      const { data } = await supabase.auth.getUser();
-      user = data.user;
+      const { data, error } = await supabase.auth.getUser();
+      if (!error && data?.user) {
+        user = data.user;
+      }
     } catch (err) {
-      // Network jitter
+      // SILENT FAIL on network jitter - let the page handle it if needed
+      console.warn('Middleware Auth Check Interrupted:', err instanceof Error ? err.message : 'Timeout');
     }
   }
 

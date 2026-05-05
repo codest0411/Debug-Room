@@ -47,8 +47,8 @@ export function AdminSidebar({ user, collapsed, onToggle }: {
       <div style={{ padding: collapsed ? '16px 0' : '16px 16px', display: 'flex', alignItems: 'center', gap: 10, borderBottom: '1px solid #1E1E1E', justifyContent: collapsed ? 'center' : 'flex-start' }}>
         {!collapsed && (
           <div>
-            <div style={{ color: '#00FF88', fontFamily: 'monospace', fontWeight: 700, fontSize: '0.9rem' }}>DEBUG_ROOM</div>
-            <div style={{ color: '#555', fontSize: '0.65rem', letterSpacing: '0.15em' }}>ADMIN CONSOLE</div>
+            <div style={{ color: '#00FF88', fontFamily: 'monospace', fontWeight: 700, fontSize: '0.9rem', cursor: 'default', userSelect: 'none' }}>DEBUG_ROOM</div>
+            <div style={{ color: '#555', fontSize: '0.65rem', letterSpacing: '0.15em', cursor: 'default', userSelect: 'none' }}>ADMIN CONSOLE</div>
           </div>
         )}
         {collapsed && <span style={{ color: '#00FF88', fontSize: '1rem' }}>⚡</span>}
@@ -135,17 +135,47 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
     async function checkAuth() {
-      const supabase = createClient();
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (!authUser) { router.push('/admin/login'); return; }
-      const { data } = await supabase.from('users').select('username, display_name, email, is_admin, is_super_admin, admin_role').eq('id', authUser.id).single();
-      if (!data?.is_admin) { router.push('/admin/login'); return; }
-      setUser({ ...data, email: authUser.email });
-      setIsLoading(false);
+      if (user) {
+        setIsLoading(false);
+        return;
+      }
+      
+      try {
+        const supabase = createClient();
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        
+        if (!mounted) return;
+
+        if (!authUser) {
+          router.push('/admin/login');
+          return;
+        }
+
+        const { data } = await supabase
+          .from('users')
+          .select('username, display_name, email, is_admin, is_super_admin, admin_role')
+          .eq('id', authUser.id)
+          .single();
+
+        if (!mounted) return;
+
+        if (!data?.is_admin) {
+          router.push('/admin/login');
+          return;
+        }
+
+        setUser({ ...data, email: authUser.email });
+      } catch (err) {
+        console.error('AdminShell Auth Error:', err);
+      } finally {
+        if (mounted) setIsLoading(false);
+      }
     }
     checkAuth();
-  }, [router]);
+    return () => { mounted = false; };
+  }, [router, user]);
 
   if (isLoading) {
     return (

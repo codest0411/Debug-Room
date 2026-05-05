@@ -74,7 +74,7 @@ export function HubClient({ initialRooms, initialProgress, initialUser }: any) {
   return (
     <div style={{ position: 'relative', zIndex: 1, padding: '100px 40px 60px' }}>
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 40px', borderBottom: '1px solid var(--border)', backdropFilter: 'blur(20px)', background: 'rgba(10,10,15,0.9)' }}>
-        <Link href="/" style={{ textDecoration: 'none' }}><span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--accent)' }}>{'>'} DEBUG_ROOM</span></Link>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--accent)', cursor: 'default', userSelect: 'none' }}>{'>'} DEBUG_ROOM</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           {initialUser ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>

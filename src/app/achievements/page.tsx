@@ -34,7 +34,7 @@ export default function AchievementsPage() {
       <MatrixRain />
       
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 40px', borderBottom: '1px solid var(--border)', backdropFilter: 'blur(20px)', background: 'rgba(10,10,15,0.9)' }}>
-        <Link href="/hub" style={{ textDecoration: 'none', fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--accent)' }}>{'>'} DEBUG_ROOM</Link>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--accent)', cursor: 'default', userSelect: 'none' }}>{'>'} DEBUG_ROOM</div>
         <Link href="/hub"><button className="btn-ghost" style={{ padding: '6px 16px', fontSize: '0.75rem' }}>BACK TO HUB</button></Link>
       </nav>
 
