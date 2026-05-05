@@ -334,24 +334,6 @@ Theme panel includes:
 
 ---
 
-## 💼 Final Year Project Value
-
-This project is strong for:
-
-* Final year BCA / MCA projects
-* Portfolio showcase
-* Internship applications
-* Full-stack developer interviews
-* Startup MVP presentation
-* Hackathon submissions
-
-It looks professional, investor-ready, and viva-ready.
-
-Not a basic college project.
-A real product-level platform.
-
----
-
 ## ☕ Final Line
 
 > Built by developers.
