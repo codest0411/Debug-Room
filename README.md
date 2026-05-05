@@ -1,62 +1,139 @@
 # THE DEBUG ROOM ⚡
 
-**The production server is down. You are the only hope.**
+> **The production server is down. You are the only hope.**
 
-THE DEBUG ROOM is a cinematic, immersive escape room experience designed specifically for developers. Navigate through broken codebases, solve real-world programming puzzles, and escape the mainframe before the timer hits zero.
+THE DEBUG ROOM is a cinematic, immersive coding escape room platform built for developers.
+Solve real-world programming puzzles, debug broken systems, unlock hidden rooms, and escape the mainframe before the timer hits zero.
 
-![THE DEBUG ROOM](/public/hero-preview.png)
+It starts simple.
+It gets deeper.
+It gets harder.
+Only logic can save you.
 
-## 🎮 Features
+---
 
-- **10 Themed Rooms:** From the depths of the *Database Depths* to the heights of *React Shipwreck*.
-- **Real Coding Puzzles:** Solve logic bugs, syntax errors, and architectural flaws in JS, Python, SQL, and more.
-- **Ghost AI Hint System:** Get help from the machine... for a price (XP).
-- **Global Leaderboard:** Compete against other developers for the fastest escape times.
-- **Cinematic Experience:** Terminal-style boot sequences, matrix rain effects, and immersive soundscapes.
-- **Comprehensive Admin Panel:** Full control over rooms, puzzles, users, and platform analytics.
+## 🌊 Project Concept
+
+THE DEBUG ROOM is not just a website — it is a full gamified developer experience.
+
+Users enter different coding-based escape rooms where each room focuses on a different programming technology like HTML, CSS, JavaScript, React, Node.js, Databases, Algorithms, and more.
+
+Each room contains:
+
+* Broken code
+* Logic puzzles
+* Syntax errors
+* Hidden clues
+* Time-based challenges
+* Unlock systems
+* XP rewards
+* Achievement badges
+* Final boss challenges
+
+The deeper the user goes, the harder the game becomes.
+
+Simple outside. Powerful inside.
+
+---
+
+## 🎮 Core Features
+
+* 10 themed escape rooms
+* Real coding challenges
+* Ghost AI hint system
+* Global leaderboard
+* Cinematic terminal experience
+* Full theme customization panel
+* Admin command center
+* XP + achievement system
+* Responsive modern UI
+* Supabase-powered backend
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Framework:** Next.js 15+ (App Router)
-- **Styling:** Tailwind CSS v4 + Framer Motion
-- **Database/Auth:** Supabase
-- **Editor:** Monaco Editor (VS Code core)
-- **Animations:** GSAP + TSParticles
+### Frontend
+
+* Next.js 15+
+* React.js
+* TypeScript
+* Tailwind CSS v4
+* Framer Motion
+* GSAP
+* Shadcn UI
+* Zustand
+
+### Backend
+
+* Supabase
+
+### Tools
+
+* Monaco Editor
+* TSParticles
+* ESLint
+* Prettier
+* GitHub Actions
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 20+
-- Supabase account
+
+* Node.js 20+
+* npm / pnpm
+* Supabase account
 
 ### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/codest0411/Debug-Room.git
-   ```
+```bash
+git clone https://github.com/codest0411/Debug-Room.git
+cd Debug-Room
+npm install
+```
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+### Environment Variables
 
-3. Configure environment variables (`.env.local`):
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
-   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-   ```
+Create `.env.local`
 
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+```
 
-## 🛡️ Admin Access
+### Run Project
 
-Access the command center at `/admin`. Administrative privileges are required.
+```bash
+npm run dev
+```
+
+Open:
+
+```bash
+http://localhost:3000
+```
 
 ---
 
-Made with ☕ by developers, for developers.
+## 🔐 Admin Access
+
+Visit:
+
+```bash
+/admin
+```
+
+Administrative privileges required.
+
+---
+
+## ☕ Final Line
+
+> Built by developers.
+> Designed for problem solvers.
+> Escaped by legends.
+
+# Code. Debug. Escape. Repeat. ⚡
