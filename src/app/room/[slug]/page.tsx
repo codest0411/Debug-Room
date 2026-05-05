@@ -248,6 +248,7 @@ export default function RoomPage() {
       setTimeout(() => setCorrectFlash(false), 600);
 
       if (userId) {
+        // Manually update progress to ensure it's not stuck in "In Progress"
         await supabase.rpc('complete_puzzle', {
           p_user_id: userId,
           p_puzzle_id: currentPuzzle.id,
@@ -256,6 +257,29 @@ export default function RoomPage() {
           p_time_taken_seconds: 0,
           p_submitted_code: userCode,
         });
+
+        if (room) {
+          const { data: currentProg } = await supabase
+            .from('room_progress')
+            .select('status, puzzles_solved')
+            .eq('user_id', userId)
+            .eq('room_id', room.id)
+            .single();
+
+          const isLastPuzzle = currentIdx === puzzles.length - 1;
+          const newStatus = (isLastPuzzle || currentProg?.status === 'completed' || currentProg?.status === 'perfect') 
+            ? 'completed' 
+            : 'in_progress';
+
+          await supabase.from('room_progress').upsert({
+            user_id: userId,
+            room_id: room.id,
+            puzzles_solved: Math.max(currentIdx + 1, currentProg?.puzzles_solved || 0),
+            status: newStatus,
+            last_played_at: new Date().toISOString(),
+            ...(newStatus === 'completed' ? { completed_at: new Date().toISOString() } : {})
+          });
+        }
       }
 
       await new Promise((r) => setTimeout(r, 1500));

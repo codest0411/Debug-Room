@@ -28,18 +28,17 @@ function RoomCard({
   room,
   progress,
   isNext,
+  canAccess,
 }: {
   room: Room;
   progress: RoomProgress | undefined;
   isNext: boolean;
+  canAccess: boolean;
 }) {
   const color = ROOM_COLORS[room.room_number] || 'var(--accent)';
   const isCompleted = progress?.status === 'completed' || progress?.status === 'perfect';
   const isInProgress = progress?.status === 'in_progress';
-  // Logic: Room is locked if:
-  // 1. User has no progress and it's NOT the first room AND NOT the next room in sequence
-  // 2. Previous room is not completed
-  const isLocked = !isNext && !isCompleted && !isInProgress && room.room_number > 1;
+  const isLocked = !canAccess && !isCompleted && !isInProgress && room.room_number > 1;
   const completionPct =
     progress && progress.puzzles_total > 0
       ? Math.round((progress.puzzles_solved / progress.puzzles_total) * 100)
@@ -353,6 +352,10 @@ export default function HubPage() {
             {rooms.map((room, i) => {
               const roomProgress = progress.find((p) => p.room_id === room.id);
               const isNext = nextRoom?.id === room.id;
+              
+              const prevRoom = i > 0 ? rooms[i-1] : null;
+              const prevProgress = prevRoom ? progress.find(p => p.room_id === prevRoom.id) : null;
+              const isPrevCompleted = i === 0 || (prevProgress?.status === 'completed' || prevProgress?.status === 'perfect');
 
               return (
                 <motion.div
@@ -361,7 +364,12 @@ export default function HubPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
                 >
-                  <RoomCard room={room} progress={roomProgress} isNext={isNext} />
+                  <RoomCard 
+                    room={room} 
+                    progress={roomProgress} 
+                    isNext={isNext} 
+                    canAccess={isPrevCompleted || isNext}
+                  />
                 </motion.div>
               );
             })}

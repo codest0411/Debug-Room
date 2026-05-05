@@ -191,6 +191,9 @@ async function seed() {
   // Clear existing puzzles for this room to avoid conflicts
   await supabase.from('puzzles').delete().eq('room_id', room.id);
 
+  // Update room total_puzzles metadata
+  await supabase.from('rooms').update({ total_puzzles: htmlIslandPuzzles.length }).eq('id', room.id);
+
   for (const puzzle of htmlIslandPuzzles) {
     const { error } = await supabase.from('puzzles').insert({
       ...puzzle,
