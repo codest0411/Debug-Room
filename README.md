@@ -130,6 +130,228 @@ Administrative privileges required.
 
 ---
 
+---
+
+## 🧭 Complete User Flow
+
+```text
+Landing Page
+   ↓
+Login / Signup
+   ↓
+Profile Setup
+   ↓
+Theme Selection Panel
+   ↓
+Mission Brief
+   ↓
+Room Selection Dashboard
+   ↓
+Choose Escape Room
+   ↓
+Enter Puzzle Room
+   ↓
+Solve Coding Challenge
+   ↓
+Need Hint?
+   ├── Yes → Ghost AI Hint System (XP Cost)
+   └── No
+   ↓
+Puzzle Solved?
+   ├── No → Retry + Timer Continues
+   └── Yes
+   ↓
+Earn XP + Badge + Unlock Next Room
+   ↓
+Progress Saved to Supabase
+   ↓
+Leaderboard Update
+   ↓
+Final Escape Protocol
+   ↓
+Victory Screen + Ranking
+```
+
+---
+
+## 🏗️ System Architecture
+
+```text
+Frontend Layer (Next.js + React + TypeScript)
+   ↓
+UI Components + Theme Engine + Animations
+   ↓
+Authentication Layer
+   ↓
+Supabase Auth
+   ↓
+Game Engine Layer
+   ↓
+Monaco Editor + Puzzle Validation Engine
+   ↓
+XP System + Progress Tracker
+   ↓
+Leaderboard + Achievement System
+   ↓
+Admin Command Center
+   ↓
+Analytics + Reports + User Management
+```
+
+---
+
+## 🎨 Design System
+
+### UI Philosophy
+
+Simple outside.
+Powerful inside.
+
+The interface should feel:
+
+* Premium like a startup product
+* Smooth like a modern SaaS platform
+* Fun like a real game
+* Smart like a developer tool
+* Friendly for beginners
+* Challenging for advanced coders
+
+### Visual Design Rules
+
+* Rounded premium cards
+* Glassmorphism panels
+* Soft gradients
+* Floating UI elements
+* Smooth hover interactions
+* Scroll reveal animations
+* Minimal clean spacing
+* Responsive layout for all devices
+* Elegant motion transitions
+* Lightweight fast-loading structure
+
+### Theme Engine
+
+Users can switch between:
+
+* Light Mode
+* Dark Mode
+* Ocean Blue
+* Sunset
+* Forest
+* Purple Neon
+* Minimal White
+* Midnight
+* Soft Pink
+* Hacker Green
+
+Theme panel includes:
+
+* Live preview
+* Accent color selection
+* Font style options
+* UI density control
+* Animation ON/OFF
+* Sound ON/OFF
+* Saved preferences
+
+---
+
+## 📊 Admin Dashboard Modules
+
+### User Management
+
+* View users
+* Manage access
+* Ban / restore users
+* Monitor player activity
+
+### Room Management
+
+* Add new escape rooms
+* Edit puzzles
+* Difficulty balancing
+* Unlock conditions
+
+### Analytics Panel
+
+* Completion rates
+* Most failed puzzles
+* Average escape time
+* User retention
+* Leaderboard performance
+
+### Content Engine
+
+* Add hidden clues
+* Secret rooms
+* Bonus challenges
+* Seasonal events
+
+---
+
+## 🚀 Premium Features
+
+* Ghost AI smart hint engine
+* Daily challenge mode
+* Weekly coding tournaments
+* Secret hidden rooms
+* Easter eggs for developers
+* Inspect element hidden clues
+* Keyboard shortcuts
+* Accessibility support
+* PWA support
+* Offline mode basics
+* Resume progress system
+* Achievement unlock animations
+* Confetti success effects
+* Failure state cinematic alerts
+
+---
+
+## 📈 Future Expansion Roadmap
+
+### Phase 2
+
+* Multiplayer co-op escape mode
+* Team coding battles
+* Pair programming rooms
+* Live coding tournaments
+
+### Phase 3
+
+* AI-generated puzzles
+* Company interview simulation rooms
+* Hiring challenge rooms
+* GitHub profile sync
+* Resume scoring room
+
+### Phase 4
+
+* Mobile App
+* Discord integration
+* Community challenge builder
+* Public puzzle marketplace
+
+---
+
+## 💼 Final Year Project Value
+
+This project is strong for:
+
+* Final year BCA / MCA projects
+* Portfolio showcase
+* Internship applications
+* Full-stack developer interviews
+* Startup MVP presentation
+* Hackathon submissions
+
+It looks professional, investor-ready, and viva-ready.
+
+Not a basic college project.
+A real product-level platform.
+
+---
+
 ## ☕ Final Line
 
 > Built by developers.

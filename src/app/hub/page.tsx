@@ -34,9 +34,12 @@ function RoomCard({
   isNext: boolean;
 }) {
   const color = ROOM_COLORS[room.room_number] || 'var(--accent)';
-  const isLocked = (progress?.status === 'locked' || !progress) && !isNext;
   const isCompleted = progress?.status === 'completed' || progress?.status === 'perfect';
   const isInProgress = progress?.status === 'in_progress';
+  // Logic: Room is locked if:
+  // 1. User has no progress and it's NOT the first room AND NOT the next room in sequence
+  // 2. Previous room is not completed
+  const isLocked = !isNext && !isCompleted && !isInProgress && room.room_number > 1;
   const completionPct =
     progress && progress.puzzles_total > 0
       ? Math.round((progress.puzzles_solved / progress.puzzles_total) * 100)

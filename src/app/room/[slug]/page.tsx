@@ -69,15 +69,16 @@ function GhostHint({ hints, usedHints, onUseHint, puzzle }: {
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             style={{
               position: 'absolute',
-              top: '120%',
+              top: 'calc(100% + 12px)',
               right: 0,
               width: 320,
-              background: 'var(--surface)',
+              background: 'rgba(15, 15, 25, 0.98)',
+              backdropFilter: 'blur(10px)',
               border: '1px solid #9D4EDD',
               borderRadius: 12,
-              padding: 20,
-              boxShadow: '0 0 30px rgba(157,78,221,0.3)',
-              zIndex: 50,
+              padding: 24,
+              boxShadow: '0 10px 40px rgba(0,0,0,0.5), 0 0 20px rgba(157,78,221,0.2)',
+              zIndex: 1000,
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
