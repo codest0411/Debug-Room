@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { createClient } from '@/lib/supabase/client';
 import { MatrixRain } from '@/components/effects/MatrixRain';
@@ -305,14 +306,45 @@ export default function RoomPage() {
 
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-          style={{ width: 50, height: 50, border: '3px solid var(--border)', borderTop: '3px solid var(--accent)', borderRadius: '50%' }} />
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#050505' }}>
+        <div className="animate-pulse-neon" style={{ color: 'var(--accent)', fontFamily: 'var(--font-display)' }}>LOADING ENVIRONMENT...</div>
       </div>
     );
   }
 
-  if (!room || !currentPuzzle) return null;
+  if (!room) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#050505', color: '#888', textAlign: 'center', padding: 40 }}>
+        <div style={{ fontSize: 48, marginBottom: 20 }}>🔍</div>
+        <h2 style={{ color: '#F0F0F0', fontFamily: 'var(--font-display)', marginBottom: 12 }}>Environment Offline</h2>
+        <p style={{ maxWidth: 400, fontSize: '0.9rem', lineHeight: 1.6 }}>The slug "{slug}" does not match any active mainframe environments. It may have been relocated or purged.</p>
+        <Link href="/hub">
+          <button className="btn-ghost" style={{ marginTop: 24 }}>RETURN TO HUB</button>
+        </Link>
+      </div>
+    );
+  }
+
+  if (puzzles.length === 0) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#050505', color: '#888', textAlign: 'center', padding: 40 }}>
+        <div style={{ fontSize: 48, marginBottom: 20 }}>🚧</div>
+        <h2 style={{ color: '#F0F0F0', fontFamily: 'var(--font-display)', marginBottom: 12 }}>{room.name.toUpperCase()} Empty</h2>
+        <p style={{ maxWidth: 400, fontSize: '0.9rem', lineHeight: 1.6 }}>This environment is active but contains no logic puzzles. Access the Admin Panel to populate the room core.</p>
+        <Link href="/hub">
+          <button className="btn-ghost" style={{ marginTop: 24 }}>RETURN TO HUB</button>
+        </Link>
+      </div>
+    );
+  }
+
+  if (!currentPuzzle) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#050505' }}>
+        <div className="animate-pulse-neon" style={{ color: 'var(--accent)', fontFamily: 'var(--font-display)' }}>SYNCHRONIZING CORE...</div>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} style={{ minHeight: '100vh', position: 'relative', display: 'flex', flexDirection: 'column' }}>
