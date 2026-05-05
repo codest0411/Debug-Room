@@ -151,6 +151,7 @@ export default function RoomPage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [wrongFlash, setWrongFlash] = useState(false);
   const [correctFlash, setCorrectFlash] = useState(false);
+  const [ghostReaction, setGhostReaction] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const currentPuzzle = puzzles[currentIdx];
@@ -253,7 +254,7 @@ export default function RoomPage() {
         });
       }
 
-      await new Promise((r) => setTimeout(r, 1000));
+      await new Promise((r) => setTimeout(r, 1500));
 
       if (currentIdx < puzzles.length - 1) {
         const nextIdx = currentIdx + 1;
@@ -267,7 +268,21 @@ export default function RoomPage() {
     } else {
       setWrongFlash(true);
       setSubmitResult('wrong');
-      setTimeout(() => { setWrongFlash(false); setSubmitResult(null); }, 800);
+      
+      const ghostInsults = [
+        "Is that the best you can do? A literal script kiddie could do better.",
+        "Logic error. Again. Do you even know what a compiler is?",
+        "Wrong. Try thinking for once.",
+        "The mainframe laughs at your pathetic attempt."
+      ];
+      const selected = ghostInsults[Math.floor(Math.random() * ghostInsults.length)];
+      setGhostReaction(selected);
+
+      setTimeout(() => { 
+        setWrongFlash(false); 
+        setSubmitResult(null); 
+        setGhostReaction(null);
+      }, 3000);
 
       if (userId && currentPuzzle) {
         await supabase.from('puzzle_attempts').insert({
@@ -412,33 +427,53 @@ export default function RoomPage() {
             ))}
           </div>
 
-          <div style={{ padding: 24, flex: 1 }}>
-            <div style={{ fontSize: '0.65rem', color: 'var(--accent)', fontFamily: 'var(--font-display)', letterSpacing: '0.15em', marginBottom: 8 }}>
-              PUZZLE {currentIdx + 1}
-            </div>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.2rem', marginBottom: 12, color: 'var(--text-primary)' }}>
-              {currentPuzzle.title}
-            </h2>
-
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 16, fontStyle: 'italic', lineHeight: 1.6 }}>
-              {currentPuzzle.story_context}
-            </div>
-
-            <div style={{ padding: 16, background: 'rgba(0,217,255,0.05)', border: '1px solid rgba(0,217,255,0.15)', borderRadius: 8, marginBottom: 20 }}>
-              <div style={{ fontSize: '0.7rem', color: 'var(--accent-2)', fontFamily: 'var(--font-display)', marginBottom: 8, letterSpacing: '0.1em' }}>
-                MISSION
+            <div style={{ 
+              marginBottom: 24, 
+              padding: 20, 
+              background: 'rgba(0,255,136,0.03)', 
+              border: '1px solid rgba(0,255,136,0.1)', 
+              borderRadius: 12,
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, width: 2, height: '100%', background: 'var(--accent)' }} />
+              <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <div style={{ fontSize: '1.5rem', filter: 'drop-shadow(0 0 8px var(--accent))' }}>👻</div>
+                <div>
+                  <div style={{ fontSize: '0.6rem', color: 'var(--accent)', fontFamily: 'var(--font-display)', letterSpacing: '0.1em', marginBottom: 4 }}>GHOST_AI // LOG_ENTRY</div>
+                  <div style={{ fontSize: '0.85rem', color: '#EEE', lineHeight: 1.5, fontStyle: 'italic', fontFamily: 'var(--font-code)' }}>
+                    "{currentPuzzle.story_context}"
+                  </div>
+                </div>
               </div>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-                {currentPuzzle.description}
-              </p>
             </div>
 
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <span className="badge badge-info">{currentPuzzle.language}</span>
-              <span className="badge badge-warning">+{currentPuzzle.xp_reward} XP</span>
-              <span className="badge badge-muted">{Math.floor(currentPuzzle.time_limit_seconds / 60)}m limit</span>
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: 'var(--font-display)', letterSpacing: '0.15em', marginBottom: 8 }}>
+                OBJECTIVE_SIG
+              </div>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.4rem', marginBottom: 12, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+                {currentPuzzle.title}
+              </h2>
+
+              <div style={{ padding: 16, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', borderRadius: 8, marginBottom: 20 }}>
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+                  {currentPuzzle.description}
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                <span style={{ padding: '4px 10px', borderRadius: 4, background: 'rgba(0,217,255,0.1)', border: '1px solid rgba(0,217,255,0.2)', color: '#00D9FF', fontSize: '0.65rem', fontWeight: 700, fontFamily: 'var(--font-code)' }}>
+                  {currentPuzzle.language.toUpperCase()}
+                </span>
+                <span style={{ padding: '4px 10px', borderRadius: 4, background: 'rgba(255,215,0,0.1)', border: '1px solid rgba(255,215,0,0.2)', color: '#FFD700', fontSize: '0.65rem', fontWeight: 700, fontFamily: 'var(--font-code)' }}>
+                  +{currentPuzzle.xp_reward} XP
+                </span>
+                <span style={{ padding: '4px 10px', borderRadius: 4, background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', color: 'var(--text-muted)', fontSize: '0.65rem', fontWeight: 700, fontFamily: 'var(--font-code)' }}>
+                  {Math.floor(currentPuzzle.time_limit_seconds / 60)}M LIMIT
+                </span>
+              </div>
             </div>
-          </div>
 
           {/* Submit result feedback */}
           <AnimatePresence>
@@ -450,7 +485,10 @@ export default function RoomPage() {
                 <div style={{ color: 'var(--danger)', fontFamily: 'var(--font-display)', fontSize: '0.85rem', fontWeight: 700, marginBottom: 4 }}>
                   ✗ INCORRECT
                 </div>
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+                <div style={{ color: '#EEE', fontSize: '0.8rem', fontStyle: 'italic', marginBottom: 4 }}>
+                  "{ghostReaction}"
+                </div>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>
                   Check the logic again. The bug is still there.
                 </div>
               </motion.div>
