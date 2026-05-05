@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { MatrixRain } from '@/components/effects/MatrixRain';
 import { MouseTrail } from '@/components/effects/MouseTrail';
 import { ThemePanel } from '@/components/theme/ThemePanel';
+import { SystemControls, CRTOverlay, playSound } from '@/components/effects/SystemControls';
 
 const ROOMS_PREVIEW = [
   { number: 1, name: 'HTML Island', icon: '🏝️', difficulty: 1, color: '#FFB347', lang: 'HTML5' },
@@ -86,8 +87,12 @@ function RoomCard({ room }: { room: (typeof ROOMS_PREVIEW)[0] }) {
           flexDirection: 'column',
           height: '100%',
         }}
-        onHoverStart={() => setIsHovered(true)}
+        onHoverStart={() => {
+          setIsHovered(true);
+          playSound('hover');
+        }}
         onHoverEnd={() => setIsHovered(false)}
+        onClick={() => playSound('click')}
         whileHover={{ scale: 1.05, y: -10, rotateX: 10, rotateY: -10 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
@@ -183,7 +188,9 @@ export default function LandingPage() {
     let i = 0;
     const timer = setInterval(() => {
       if (i < fullSubtitle.length) {
-        setTypewriterText(fullSubtitle.slice(0, i + 1));
+        const nextChar = fullSubtitle.slice(0, i + 1);
+        setTypewriterText(nextChar);
+        if (nextChar.length % 2 === 0) playSound('typewriter');
         i++;
       } else {
         clearInterval(timer);
@@ -248,12 +255,22 @@ export default function LandingPage() {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
               <Link href="/auth/login">
-                <button className="btn-ghost" style={{ padding: '8px 20px', fontSize: '0.75rem' }}>
+                <button 
+                  className="btn-ghost" 
+                  style={{ padding: '8px 20px', fontSize: '0.75rem' }}
+                  onMouseEnter={() => playSound('hover')}
+                  onClick={() => playSound('click')}
+                >
                   Login
                 </button>
               </Link>
               <Link href="/auth/signup">
-                <button className="btn-primary" style={{ padding: '8px 20px', fontSize: '0.75rem' }}>
+                <button 
+                  className="btn-primary" 
+                  style={{ padding: '8px 20px', fontSize: '0.75rem' }}
+                  onMouseEnter={() => playSound('hover')}
+                  onClick={() => playSound('click')}
+                >
                   Sign Up
                 </button>
               </Link>
@@ -346,12 +363,19 @@ export default function LandingPage() {
                 <button
                   className="btn-primary animate-pulse-neon"
                   style={{ fontSize: '0.9rem', padding: '16px 36px' }}
+                  onMouseEnter={() => playSound('hover')}
+                  onClick={() => playSound('click')}
                 >
                   {isLoggedIn ? '⚡ CONTINUE PROGRESS' : '⚡ ENTER THE DEBUG ROOM'}
                 </button>
               </Link>
               <Link href="#rooms">
-                <button className="btn-ghost" style={{ fontSize: '0.9rem', padding: '16px 36px' }}>
+                <button 
+                  className="btn-ghost" 
+                  style={{ fontSize: '0.9rem', padding: '16px 36px' }}
+                  onMouseEnter={() => playSound('hover')}
+                  onClick={() => playSound('click')}
+                >
                   VIEW ESCAPE ROOMS
                 </button>
               </Link>
@@ -607,6 +631,52 @@ export default function LandingPage() {
             </div>
           </motion.section>
 
+          {/* LIVE INTRUSION FEED */}
+          <motion.section
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            style={{
+              padding: '60px 40px',
+              background: '#050508',
+              borderTop: '1px solid var(--border)',
+              fontFamily: 'var(--font-code)',
+              overflow: 'hidden',
+              position: 'relative'
+            }}
+          >
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg, transparent, var(--accent), transparent)' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
+              <div style={{ color: 'var(--accent)', fontSize: '0.7rem', letterSpacing: '0.2em' }}>[ LIVE_SECURITY_FEED ]</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>UPLINK_STABLE // 128.0.0.1</div>
+            </div>
+            
+            <div style={{ height: 200, overflow: 'hidden', display: 'flex', flexDirection: 'column-reverse' }}>
+              {[
+                'BYPASSING FIREWALL... SUCCESS',
+                'TRACING IP: 192.168.1.104... LOCATED',
+                'DECRYPTING ROOM_08_ACCESS_KEY... [########--] 82%',
+                'INJECTING SQL_PAYLOAD... DETECTED',
+                'RE-ROUTING TRAFFIC VIA TOR_NODE_99',
+                'USER_0x42 JOINED THE MAINFRAME',
+                'ALERT: KERNEL_PANIC AVERTED',
+                'DUMPING DATABASE_HASHES... COMPLETE',
+                'SYSTEM_LOG: UNAUTHORIZED ACCESS AT ROOM_03',
+                'CLEANING TRACKS... OK',
+              ].map((log, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.2 }}
+                  style={{ fontSize: '0.8rem', color: i === 0 ? 'var(--accent)' : 'var(--text-muted)', marginBottom: 4 }}
+                >
+                  <span style={{ color: 'var(--accent)', marginRight: 8 }}>{'>'}</span> {log}
+                </motion.div>
+              ))}
+            </div>
+          </motion.section>
+
           {/* FINAL CTA */}
           <motion.section
             initial={{ opacity: 0, y: 40 }}
@@ -649,6 +719,8 @@ export default function LandingPage() {
               <button
                 className="btn-primary animate-pulse-neon"
                 style={{ fontSize: '1rem', padding: '18px 48px' }}
+                onMouseEnter={() => playSound('hover')}
+                onClick={() => playSound('click')}
               >
                 ⚡ BEGIN THE ESCAPE
               </button>
@@ -679,6 +751,8 @@ export default function LandingPage() {
               {'>'} DEBUG_ROOM v2.0 — Made by developers. For developers. No designers were harmed.
             </div>
           </footer>
+          <SystemControls />
+          <CRTOverlay />
         </motion.div>
       </AnimatePresence>
     </>

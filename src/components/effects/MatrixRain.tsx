@@ -27,10 +27,18 @@ export function MatrixRain() {
     const drops: number[] = Array(columns).fill(1);
 
     const draw = () => {
+      // STOP animation if glitch is disabled
+      if (document.documentElement.getAttribute('data-glitch') === 'off') {
+        animFrame = requestAnimationFrame(draw);
+        return;
+      }
+
       ctx.fillStyle = 'rgba(10, 10, 15, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = '#00FF88';
+      // Get dynamic accent color from CSS variables
+      const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#00FF88';
+      
       ctx.font = `${fontSize}px "JetBrains Mono", monospace`;
 
       for (let i = 0; i < drops.length; i++) {
@@ -38,11 +46,10 @@ export function MatrixRain() {
         const x = i * fontSize;
         const y = drops[i] * fontSize;
 
-        // Brighten first character
         if (drops[i] === 1) {
           ctx.fillStyle = '#FFFFFF';
         } else {
-          ctx.fillStyle = '#00FF88';
+          ctx.fillStyle = accentColor;
         }
 
         ctx.fillText(char, x, y);
