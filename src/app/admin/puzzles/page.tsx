@@ -44,15 +44,17 @@ export default function AdminPuzzlesPage() {
     e.preventDefault();
     if (!editingPuzzle) return;
 
+    const { room, ...saveData } = editingPuzzle;
+
     const { error } = await supabase.from('puzzles').upsert({
-      ...editingPuzzle,
-      puzzle_number: Number(editingPuzzle.puzzle_number),
-      difficulty: Number(editingPuzzle.difficulty),
-      order_index: Number(editingPuzzle.order_index || editingPuzzle.puzzle_number),
-      xp_reward: Number(editingPuzzle.xp_reward || 50),
-      xp_penalty_wrong: Number(editingPuzzle.xp_penalty_wrong || 5),
-      xp_penalty_hint: Number(editingPuzzle.xp_penalty_hint || 25),
-      time_limit_seconds: Number(editingPuzzle.time_limit_seconds || 300),
+      ...saveData,
+      puzzle_number: Number(saveData.puzzle_number),
+      difficulty: Number(saveData.difficulty),
+      order_index: Number(saveData.order_index || saveData.puzzle_number),
+      xp_reward: Number(saveData.xp_reward || 50),
+      xp_penalty_wrong: Number(saveData.xp_penalty_wrong || 5),
+      xp_penalty_hint: Number(saveData.xp_penalty_hint || 25),
+      time_limit_seconds: Number(saveData.time_limit_seconds || 300),
     });
 
     if (error) {

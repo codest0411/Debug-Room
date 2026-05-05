@@ -69,7 +69,7 @@ function GhostHint({ hints, usedHints, onUseHint, puzzle }: {
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             style={{
               position: 'absolute',
-              bottom: '110%',
+              top: '120%',
               right: 0,
               width: 320,
               background: 'var(--surface)',
@@ -221,21 +221,24 @@ export default function RoomPage() {
     let isCorrect = false;
 
     // Validate answer
-    const code = userCode.trim();
+    const code = userCode.trim().replace(/\s+/g, ' ');
+    const target = currentPuzzle.validation_value.trim().replace(/\s+/g, ' ');
+
     switch (currentPuzzle.validation_type) {
       case 'exact_match':
-        isCorrect = code === currentPuzzle.validation_value.trim();
+        isCorrect = code === target;
         break;
       case 'contains_check':
-        isCorrect = code.includes(currentPuzzle.validation_value);
+        // For contains_check, we also try a more flexible search
+        isCorrect = userCode.replace(/\s+/g, '').includes(currentPuzzle.validation_value.replace(/\s+/g, ''));
         break;
       case 'regex_match':
         try {
-          isCorrect = new RegExp(currentPuzzle.validation_value, 'gm').test(code);
+          isCorrect = new RegExp(currentPuzzle.validation_value, 'gm').test(userCode);
         } catch { isCorrect = false; }
         break;
       default:
-        isCorrect = code.toLowerCase().includes(currentPuzzle.validation_value.toLowerCase());
+        isCorrect = userCode.toLowerCase().includes(currentPuzzle.validation_value.toLowerCase());
     }
 
     if (isCorrect) {
